@@ -78,7 +78,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         default=False,
         help_text='Umožňuje prihlásiť sa do administrácie.',)
     is_active = models.BooleanField(
-        verbose_name='aktnívny',
+        verbose_name='aktívny',
         default=True,
         help_text='Označuje, či je používateľ aktívny. '
         'Používa sa namiesto mazania účtov.',)

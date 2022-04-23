@@ -193,6 +193,8 @@ class SemesterWithProblemsSerializer(ModelWithParticipationSerializer):
     class Meta:
         model = models.Semester
         fields = '__all__'
+        read_only_fields = ['semesterpublication_set',
+                            'unspecifiedpublication_set']
 
     def create(self, validated_data):
         all_series_data = validated_data.pop('series_set')
