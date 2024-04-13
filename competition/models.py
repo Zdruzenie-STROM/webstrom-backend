@@ -515,7 +515,7 @@ class Comment(models.Model):
         if self.state != CommentPublishState.PUBLISHED:
             self.text = new_text
         else:
-            raise ValueError('Published comment can not be changed')
+            raise ValueError('Publikovaný komentár nemôže byť zmenený')
 
     def can_user_modify(self, user):
         return self.problem.can_user_modify(user)

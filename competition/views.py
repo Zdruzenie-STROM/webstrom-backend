@@ -294,7 +294,7 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
         """Nahrá užívateľské riešenie k úlohe"""
         problem: Problem = self.get_object()
         if 'file' not in request.FILES:
-            raise exceptions.ParseError(detail='Request neobsahoval súbor')
+            raise exceptions.ParseError(detail='Požiadavka neobsahovala súbor')
         file = request.FILES['file']
         if mime_type(file) != 'application/pdf':
             raise exceptions.ParseError(
@@ -366,17 +366,17 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
         """Nahrá .zip archív s opravenými riešeniami (pdf-kami)."""
 
         if 'file' not in request.data:
-            raise exceptions.ParseError(detail='No file attached')
+            raise exceptions.ParseError(detail='Nie je priložený súbor')
 
         zfile = request.data['file']
 
         if not zipfile.is_zipfile(zfile):
             raise exceptions.ParseError(
-                detail='Attached file is not a zip file')
+                detail='Priložený súbor nie je súbor s príponou zip.')
 
         with zipfile.ZipFile(zfile) as zfile:
             if zfile.testzip():
-                raise exceptions.ParseError(detail='Zip file is corrupted')
+                raise exceptions.ParseError(detail='Súbor zip je poškodený')
 
             parsed_filenames = []
             errors = []
@@ -395,20 +395,20 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
                 except (IndexError, ValueError, AssertionError):
                     errors.append({
                         'filename': filename,
-                        'status': 'Cannot parse file'
+                        'status': 'Nie je možné analyzovať súbor'
                     })
                     continue
                 except EventRegistration.DoesNotExist:
                     errors.append({
                         'filename': filename,
-                        'status': f'User registration with id {registration_pk} does not exist'
+                        'status': f'Registrácia používateľa s id {registration_pk} neexistuje'
                     })
                     continue
                 except Solution.DoesNotExist:
                     errors.append({
                         'filename': filename,
-                        'status': f'Solution with registration id {registration_pk}'
-                        f'and problem id {problem_pk} does not exist'
+                        'status': f'Riešenie s registračným id {registration_pk}'
+                        f'a id úlohy {problem_pk} neexistuje'
                     })
                     continue
 
@@ -576,7 +576,7 @@ class SolutionViewSet(viewsets.ModelViewSet):
     def upload_solution_file(self, request, pk=None):
         solution: Solution = self.get_object()
         if 'file' not in request.FILES:
-            raise exceptions.ParseError(detail='Request neobsahoval súbor')
+            raise exceptions.ParseError(detail='Požiadavka neobsahovala súbor')
 
         file = request.FILES['file']
         if mime_type(file) != 'application/pdf':
@@ -593,7 +593,7 @@ class SolutionViewSet(viewsets.ModelViewSet):
     def upload_corrected_solution_file(self, request, pk=None):
         solution: Solution = self.get_object()
         if 'file' not in request.FILES:
-            raise exceptions.ParseError(detail='Request neobsahoval súbor')
+            raise exceptions.ParseError(detail='Požiadavka neobsahovala súbor')
 
         file = request.FILES['file']
         if mime_type(file) != 'application/pdf':
@@ -902,7 +902,7 @@ class PublicationViewSet(viewsets.ModelViewSet):
     def upload_publication(self, request: Request):
         """Nahrá súbor publikácie"""
         if 'file' not in request.data:
-            raise exceptions.ParseError(detail='Request neobsahoval súbor')
+            raise exceptions.ParseError(detail='Požiadavka neobsahovala súbor')
 
         file = request.data['file']
         if mime_type(file) not in ['application/pdf', 'application/zip']:
